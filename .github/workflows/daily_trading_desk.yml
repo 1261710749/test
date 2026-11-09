@@ -45,23 +45,25 @@ jobs:
 
           order_lines = []
           for o in orders:
-              order_lines.append(f"- **{o.get(\"name\")}** (`{o.get(\"symbol\")}`): {o.get(\"shares\")}股 | 成交价: ¥{o.get(\"limit_price\")} | 2ATR止损价: ¥{o.get(\"stop_loss_price\")}")
+              order_lines.append(f"• {o.get(\"name\")} ({o.get(\"symbol\")}): {o.get(\"shares\")}股 | 成交价: ¥{o.get(\"limit_price\")} | 止损: ¥{o.get(\"stop_loss_price\")}")
 
-          brief_md = f"""### 🌅 一人对冲基金 · 07:30 云端定时晨报
-          > **运行环境**：GitHub Actions 云端 7×24 调度器
-          > **账户总额**：¥{equity:.2f} RMB | 可用现金：¥{cash:.2f} RMB
-          > **风控约束**：单笔最大止损 <= ¥1,000.00 RMB (5.0%)
+          brief_text = f"""🌅 一人对冲基金 · 07:30 每日晨报
+==============================
+• 调度环境：GitHub Actions 云端 7×24
+• 账户总额：¥{equity:.2f} RMB | 现金：¥{cash:.2f} RMB
+• 风控约束：单笔最大止损 <= ¥1,000.00 (5.0%)
+------------------------------
+【最新模拟持仓】
+{"\n".join(order_lines)}
+------------------------------
+【风控状态巡检】
+• 单日 2% 熔断器：正常 (未触发)
+• 连亏 3 笔熔断器：正常 (未触发)
+• 数据时效：正常 (最新交易日数据)
+• 今日决策：【继续保持模拟盘盯盘】
+=============================="""
 
-          #### 📈 最新持仓监控
-          {"\n".join(order_lines)}
-
-          #### 🛡️ 风控状态巡检
-          - 单日亏损 2% 熔断器：正常 (未触发)
-          - 连亏 3 笔熔断器：正常 (未触发)
-          - 数据时效性：正常 (已同步最新交易日收盘价)
-          - 决策：【继续保持模拟盘盯盘】"""
-
-          notifier.send_markdown(brief_md)
+          notifier.send_text(brief_text)
           '
 
       - name: Commit Updated Trading Journal

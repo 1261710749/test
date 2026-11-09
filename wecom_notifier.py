@@ -112,41 +112,47 @@ class WeComNotifier:
         return self.send_raw_payload(payload)
 
     def send_handshake_test(self) -> Dict[str, Any]:
-        """发送握手测试消息"""
-        md = (
-            "### 🔔 一人对冲基金 · 交易台连接测试\n"
-            "> **状态**：<font color=\"info\">通信通道联通正常</font>\n"
-            "> **统筹**：幕僚长 (Chief of Staff)\n"
-            "> **资产规模**：¥20,000.00 RMB\n"
-            "> **单笔最大风险**：¥1,000.00 RMB (5.0%)\n"
-            "> **标的市场**：中国大陆 A 股 & 港股核心 ETF\n\n"
-            "交易台所有 6 位专职 Agent 已就绪，每日 07:30 晨报与订单执行将实时推送至本群！"
+        """发送握手测试消息 (个人微信完全直显)"""
+        text = (
+            "🔔 一人对冲基金 · 交易台连接测试\n"
+            "------------------------------\n"
+            "• 通信状态：通信通道联通正常 (已适配个人微信)\n"
+            "• 统筹管理：幕僚长 (Chief of Staff)\n"
+            "• 初始本金：¥20,000.00 RMB\n"
+            "• 单笔最大风险：¥1,000.00 RMB (5.0%)\n"
+            "• 标的市场：中国大陆 A 股 & 港股核心 ETF\n"
+            "------------------------------\n"
+            "交易台所有 6 位专职 Agent 已就绪，每日 07:30 晨报与订单执行将实时以纯文本格式推送至本群！"
         )
-        return self.send_markdown(md)
+        return self.send_text(text)
 
     def send_order_notification(self, order: Dict[str, Any]) -> Dict[str, Any]:
-        """发送限价单与止损单执行报告"""
-        md = (
-            f"### 📈 【交易员执行指令】订单已下达\n"
-            f"> **标的**：{order.get('name')} (`{order.get('symbol')}`)\n"
-            f"> **类别**：{order.get('market_label', '场内标的')}\n"
-            f"> **方向**：<font color=\"info\">{order.get('side', 'BUY')} (限价成交)</font>\n"
-            f"> **成交价**：¥{order.get('limit_price', 0.0):.3f}\n"
-            f"> **数量**：{order.get('shares', 0)} 股 ({order.get('lots', 0)} 手)\n"
-            f"> **占用资金**：¥{order.get('notional_rmb', 0.0):.2f}\n"
-            f"> **强制止损价**：<font color=\"warning\">¥{order.get('stop_loss_price', 0.0):.3f}</font>\n"
-            f"> **单笔最大风险**：¥{order.get('max_risk_rmb', 0.0):.2f} (严格 <= 1000 元)\n"
-            f"> **风控状态**：三者共振得分 {order.get('chart_score', 0.0)}/10，审核批准放行"
+        """发送限价单与止损单执行报告 (个人微信完全直显)"""
+        text = (
+            f"📈 【交易员执行指令】订单已下达\n"
+            f"------------------------------\n"
+            f"• 标的名称：{order.get('name')} ({order.get('symbol')})\n"
+            f"• 交易市场：{order.get('market_label', '场内标的')}\n"
+            f"• 委托方向：{order.get('side', 'BUY')} (限价成交)\n"
+            f"• 成交价格：¥{order.get('limit_price', 0.0):.3f}\n"
+            f"• 成交数量：{order.get('shares', 0)} 股 ({order.get('lots', 0)} 手)\n"
+            f"• 占用资金：¥{order.get('notional_rmb', 0.0):.2f}\n"
+            f"• 强制止损价：¥{order.get('stop_loss_price', 0.0):.3f}\n"
+            f"• 单笔最大风险：¥{order.get('max_risk_rmb', 0.0):.2f} (<= 1000 元)\n"
+            f"• 共振评分：{order.get('chart_score', 0.0)}/10，风控批准放行\n"
+            f"------------------------------"
         )
-        return self.send_markdown(md)
+        return self.send_text(text)
 
     def send_morning_brief(self, brief_text: str) -> Dict[str, Any]:
-        """推送每日 07:30 晨报"""
-        md = (
-            f"### 🌅 一人对冲基金 · 07:30 晨报\n"
-            f"{brief_text}"
+        """推送每日 07:30 晨报 (个人微信完全直显)"""
+        text = (
+            "🌅 一人对冲基金 · 07:30 每日晨报\n"
+            "==============================\n"
+            f"{brief_text}\n"
+            "=============================="
         )
-        return self.send_markdown(md)
+        return self.send_text(text)
 
 
 def main():

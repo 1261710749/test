@@ -1506,14 +1506,16 @@ def main() -> None:
                     orders_count = len(res.get("orders", []))
                     equity = res.get("total_equity_rmb", 20000.0)
                     cash = res.get("cash_remaining_rmb", 0.0)
-                    summary_md = (
-                        f"### 📊 【一人对冲基金】模拟盘调仓执行完毕\n"
-                        f"> **当前净值**：¥{equity:.2f} RMB\n"
-                        f"> **可用资金**：¥{cash:.2f} RMB\n"
-                        f"> **当前持仓标的数**：{orders_count} 只\n"
-                        f"> **风控约束**：单笔最大止损 <= ¥1,000.00，三大熔断器监控中\n"
+                    summary_text = (
+                        f"📊 【一人对冲基金】模拟盘调仓执行完毕\n"
+                        f"------------------------------\n"
+                        f"• 当前净值：¥{equity:.2f} RMB\n"
+                        f"• 可用资金：¥{cash:.2f} RMB\n"
+                        f"• 持仓标的数：{orders_count} 只\n"
+                        f"• 风控约束：单笔最大止损 <= ¥1,000.00，三大熔断器监控中\n"
+                        f"------------------------------"
                     )
-                    notifier.send_markdown(summary_md)
+                    notifier.send_text(summary_text)
             except Exception as e:
                 pass
     elif args.mode == "sunday-review":
@@ -1524,11 +1526,14 @@ def main() -> None:
                 from wecom_notifier import WeComNotifier
                 notifier = WeComNotifier()
                 if notifier.webhook_url:
-                    notifier.send_markdown(
-                        f"### 📅 【一人对冲基金】周日晋级复盘报告已生成\n"
-                        f"> **周度净值**：¥{res.get('portfolio_summary', {}).get('total_equity_rmb', 20000.0):.2f} RMB\n"
-                        f"> **晋级建议**：{res.get('promotion_ladder_decision', {}).get('action', '继续观察')}\n"
+                    sunday_text = (
+                        f"📅 【一人对冲基金】周日晋级复盘报告已生成\n"
+                        f"------------------------------\n"
+                        f"• 周度净值：¥{res.get('portfolio_summary', {}).get('total_equity_rmb', 20000.0):.2f} RMB\n"
+                        f"• 晋级建议：{res.get('promotion_ladder_decision', {}).get('action', '继续观察')}\n"
+                        f"------------------------------"
                     )
+                    notifier.send_text(sunday_text)
             except Exception as e:
                 pass
     elif args.mode == "status":
