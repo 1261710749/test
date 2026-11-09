@@ -13,6 +13,8 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import hashlib
 import json
 import logging
 import os
@@ -107,6 +109,32 @@ class WeComNotifier:
             "msgtype": "markdown",
             "markdown": {
                 "content": markdown_text
+            }
+        }
+        return self.send_raw_payload(payload)
+
+    def send_image(self, image_path: str | Path) -> Dict[str, Any]:
+        """发送图片消息 (支持普通微信直显，大小不超过 2MB)"""
+        path = Path(image_path)
+        if not path.exists():
+            logging.error(f"❌ 图片文件不存在: {path}")
+            return {"errcode": -1, "errmsg": "File not found"}
+
+        with open(path, "rb") as f:
+            data = f.read()
+
+        if len(data) > 2 * 1024 * 1024:
+            logging.error(f"❌ 图片大小 ({len(data)} 字节) 超过企业微信 2MB 限制！")
+            return {"errcode": -1, "errmsg": "Image size exceeds 2MB"}
+
+        b64_str = base64.b64encode(data).decode("utf-8")
+        md5_str = hashlib.md5(data).hexdigest()
+
+        payload = {
+            "msgtype": "image",
+            "image": {
+                "base64": b64_str,
+                "md5": md5_str
             }
         }
         return self.send_raw_payload(payload)
