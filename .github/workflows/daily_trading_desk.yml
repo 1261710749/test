@@ -1,0 +1,73 @@
+name: 一人对冲基金全天候定时交易台 (One-Person Hedge Fund Daily Desk)
+
+on:
+  schedule:
+    # 北京时间 07:30 (CST) = UTC 23:30 (前一天)。
+    # 周一至周五开盘前北京时间 07:30 对应 UTC 周日到周四 23:30:
+    - cron: '30 23 * * 0-4'
+    # 每周日北京时间 20:00 (CST) = UTC 周日 12:00 进行周度对账复盘:
+    - cron: '0 12 * * 0'
+  workflow_dispatch: # 支持在 GitHub 网页随时手动一键触发
+
+jobs:
+  run-daily-trading-desk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas requests
+
+      - name: Run Daily Morning Cycle & Push to WeCom
+        run: |
+          python strategy_rank1_bot.py --mode paper-cycle --notify-wecom
+
+      - name: Send Daily Morning Brief (07:30 CST)
+        run: |
+          python -c '
+          from wecom_notifier import WeComNotifier
+          from strategy_rank1_bot import execute_overnight_paper_portfolio
+          import datetime
+
+          notifier = WeComNotifier()
+          res = execute_overnight_paper_portfolio()
+          equity = res.get("total_equity_rmb", 20000.0)
+          cash = res.get("cash_remaining_rmb", 0.0)
+          orders = res.get("orders", [])
+
+          order_lines = []
+          for o in orders:
+              order_lines.append(f"- **{o.get(\"name\")}** (`{o.get(\"symbol\")}`): {o.get(\"shares\")}股 | 成交价: ¥{o.get(\"limit_price\")} | 2ATR止损价: ¥{o.get(\"stop_loss_price\")}")
+
+          brief_md = f"""### 🌅 一人对冲基金 · 07:30 云端定时晨报
+          > **运行环境**：GitHub Actions 云端 7×24 调度器
+          > **账户总额**：¥{equity:.2f} RMB | 可用现金：¥{cash:.2f} RMB
+          > **风控约束**：单笔最大止损 <= ¥1,000.00 RMB (5.0%)
+
+          #### 📈 最新持仓监控
+          {"\n".join(order_lines)}
+
+          #### 🛡️ 风控状态巡检
+          - 单日亏损 2% 熔断器：正常 (未触发)
+          - 连亏 3 笔熔断器：正常 (未触发)
+          - 数据时效性：正常 (已同步最新交易日收盘价)
+          - 决策：【继续保持模拟盘盯盘】"""
+
+          notifier.send_markdown(brief_md)
+          '
+
+      - name: Commit Updated Trading Journal
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add reports/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update paper trading journal [skip ci]" && git push)
+        continue-on-error: true

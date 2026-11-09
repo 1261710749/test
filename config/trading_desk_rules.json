@@ -1,0 +1,203 @@
+{
+  "desk_name": "一人对冲基金交易台 (中国大陆A股与港股 · 20,000 RMB 专版)",
+  "version": "1.0.0",
+  "locked_at": "2026-11-09T07:30:00+08:00",
+  "user_explicit_constraints": {
+    "raw_request": "新闻可以是全球，我只布局中国大陆和港股市场，可以是长回报周期，资金规模2w人民币",
+    "news_scope": "GLOBAL",
+    "markets": [
+      "CN_A",
+      "HKEX"
+    ],
+    "holding_horizon": "LONG_CYCLE",
+    "holding_period_days_range": [
+      10,
+      40
+    ],
+    "capital_rmb": 20000.0
+  },
+  "capital_rmb": 20000.0,
+  "markets": [
+    "CN_A",
+    "HKEX"
+  ],
+  "news_scope": "GLOBAL",
+  "holding_horizon": "LONG_CYCLE",
+  "max_single_risk_pct": 0.05,
+  "max_single_risk_rmb": 1000.0,
+  "max_position_pct": 0.50,
+  "max_position_rmb": 10000.0,
+  "max_position_pct_backtest": 0.48,
+  "max_concurrent_positions_backtest": 2,
+  "max_concurrent_positions_paper": 4,
+  "lot_size": 100,
+  "atr_period": 14,
+  "atr_stop_multiplier_live": 2.0,
+  "atr_stop_multiplier_backtest": 2.2,
+  "daily_loss_limit_pct": 0.02,
+  "daily_loss_limit_rmb": 400.0,
+  "max_consecutive_losses": 3,
+  "max_data_age_hours": 24.0,
+  "chart_analyst_min_score": 7.0,
+  "strategy_rubric_min_score": 18,
+  "strategy_rubric_max_score": 25,
+  "min_oos_trades": 30,
+  "settlement_rules": {
+    "T+1": [
+      "sh510300",
+      "sz159915",
+      "sh512480",
+      "sh512880",
+      "sh510880",
+      "sh512660",
+      "sh512010",
+      "sh600036",
+      "sh601398",
+      "sh601899",
+      "sh600900",
+      "sh600028",
+      "sh601857",
+      "sh601766",
+      "sh601668",
+      "sh600050",
+      "sh601328",
+      "sh600019",
+      "sh601288",
+      "sh601988",
+      "sh600522"
+    ],
+    "T+0": [
+      "sh518880",
+      "sz159920",
+      "sh513050",
+      "sh510900",
+      "hk02800",
+      "hk03033"
+    ]
+  },
+  "fee_schedule": {
+    "a_share_etf": {
+      "commission_rate": 0.00015,
+      "min_commission_rmb": 1.0,
+      "stamp_duty_sell": 0.0,
+      "transfer_fee": 0.0,
+      "baseline_slippage_bps": 5.0
+    },
+    "a_share_stock": {
+      "commission_rate": 0.00025,
+      "min_commission_rmb": 5.0,
+      "stamp_duty_sell": 0.0005,
+      "transfer_fee": 0.00001,
+      "baseline_slippage_bps": 8.0
+    },
+    "hk_direct_etf": {
+      "commission_rate": 0.0003,
+      "min_commission_rmb": 3.0,
+      "stamp_duty_sell": 0.0,
+      "transfer_fee": 0.0,
+      "baseline_slippage_bps": 5.0,
+      "hkd_to_rmb_fx": 0.92
+    }
+  },
+  "blacklist": [
+    "ST / *ST 及退市整理期股票 (存在退市与流动性枯竭风险)",
+    "科创板 (688xxx) 与北交所 (8xxxxx/43xxxx) 个股 (需50万元人民币资产门槛，超出2万元账户权限)",
+    "港股通个人直投个股 (需50万元人民币门槛，2万元账户须通过T+0跨境ETF或港股本土免印花税ETF布局)",
+    "港股仙股 (股价 < 1.0 HKD 或日均成交额 < 2,000万 HKD 的低流动性股票)",
+    "高单价A股个股 (股价 > 45 RMB/股，100股1手占用资金超22.5%本金，无法精细执行ATR仓位管理)",
+    "上市首日及前5日无涨跌幅限制新股 (如 688827 钶锐锶，缺乏历史ATR锚点)",
+    "任何未经批准的融资融券杠杆、场外配资、期货期权衍生品或做空工具",
+    "无真实数据源支撑的小道消息、微信/电报拉盘群及庄股"
+  ],
+  "pre_event_blackout": {
+    "rule": "新策略绝不在财报、美联储议息或 CPI 前上线",
+    "blackout_window_hours": 24,
+    "monitored_events": [
+      "A股/港股核心持仓标的定期财报披露前24小时 (EARNINGS)",
+      "美联储 FOMC 利率决议公布前24小时 (FED_FOMC)",
+      "美国或中国 CPI 通胀数据公布前24小时 (CPI)"
+    ]
+  },
+  "promotion_ladder": [
+    "阶段 1: 模拟盘连续运行 2 周 (7×24 全天候自动化跟踪)",
+    "阶段 2: 周日复盘验证模拟盘结果与历史回测一致 (胜率、滑点与夏普偏差在容忍带内)",
+    "阶段 3: 经用户本人明确书面批准后，以 10% 仓位 (2,000 RMB) 启动小额实盘验证",
+    "阶段 4: 实盘验证稳定后，按完整《交易台规则》扩展至 20,000 RMB 全额运行"
+  ],
+  "agents": [
+    {
+      "role": "幕僚长",
+      "english_name": "Chief of Staff",
+      "duty": "统筹交易台全局，维护《交易台规则》，是唯一直接向用户发送消息的 Agent；负责首次《问询》、《开始》、每日 [07:30]《晨报》及每周日晋级复盘汇报。"
+    },
+    {
+      "role": "侦察员",
+      "english_name": "Scout",
+      "duty": "每 [30 分钟] 扫描全球 7×24 财经新闻、X/市场情绪、宏观日历、东方财富公告与板块主力资金流，提炼全球催化剂向中国大陆A股与港股的传导路径。"
+    },
+    {
+      "role": "图表分析师",
+      "english_name": "Chart Analyst",
+      "duty": "读取 TradingView 日线前复权 (qfq) 图表，按『趋势(0-4分) + 动量(0-3分) + 成交量结构(0-3分)』三者共振模型给每个形态打 1-10 分，严格执行 >= 7.0 分才放行。"
+    },
+    {
+      "role": "策略师",
+      "english_name": "Strategist",
+      "duty": "每晚 [21:00] 使用 2019-2026 至少 3 年以上真实历史数据（含2020与2022压力期及2023-2026未见样本外数据）回测 6 大信号假设，计算收缩夏普、滚动前向与1000次蒙特卡洛最差回撤。"
+    },
+    {
+      "role": "风控官",
+      "english_name": "Risk Officer",
+      "duty": "拥有绝对终审否决权（否决即终审）；砍掉总分 < 18/25、样本外交易 < 30 笔、扣费后无优势、不抗 +1 K线延迟/2倍滑点或违反财报/FOMC/CPI静默期的任何计划。"
+    },
+    {
+      "role": "交易员",
+      "english_name": "Trader",
+      "duty": "唯一有权限触碰下单工具的 Agent（只有交易员能碰下单工具）；只执行风控官已批准的计划，强制使用限价单 (LIMIT) 并附带基于 ATR 的止损单 (STOP-LOSS)。"
+    }
+  ],
+  "schedule_24h": [
+    {
+      "time_cst": "每 30 分钟 (00:00 - 23:30)",
+      "cron": "*/30 * * * *",
+      "agent": "侦察员 (Scout)",
+      "task": "轮询新浪 7×24 全球财经直播、东方财富公告、板块主力资金流与 AH 溢价指数，更新 SQLite 缓存并向图表分析师交接。"
+    },
+    {
+      "time_cst": "09:25 / 11:30 / 15:05 / 16:10 / 20:50",
+      "cron": "5 15,16,20 * * 1-5",
+      "agent": "图表分析师 (Chart Analyst)",
+      "task": "拉取 A股 (15:00收盘) 与港股 (16:00收盘) 最新前复权 K 线，计算趋势+动量+成交量三者共振 1-10 评分，拦截 < 7.0 分标的。"
+    },
+    {
+      "time_cst": "21:00",
+      "cron": "0 21 * * *",
+      "agent": "策略师 (Strategist)",
+      "task": "启动通宵量化回测引擎（2019-2022 样本内 + 2023-2026 样本外 + 滚动前向 + 1000次蒙特卡洛 + 晚1根K线/2倍滑点拷问），生成 25 分制评分表。"
+    },
+    {
+      "time_cst": "01:00",
+      "cron": "0 1 * * *",
+      "agent": "风控官 (Risk Officer)",
+      "task": "对策略师提交的全部候选策略与隔夜信号执行《最终检查》6 问拷问，行使终审否决权，核准排名第 1 策略的 20,000 RMB ATR 整手限价止损单。"
+    },
+    {
+      "time_cst": "07:00",
+      "cron": "0 7 * * *",
+      "agent": "交易员 (Trader)",
+      "task": "通过 CNHKPaperBroker 与 AlpacaPaperBroker 同步模拟盘限价单与止损单，执行代码自检与三大熔断器巡检。"
+    },
+    {
+      "time_cst": "07:30",
+      "cron": "30 7 * * *",
+      "agent": "幕僚长 (Chief of Staff)",
+      "task": "准时向用户发送《07:30 晨报》（5行市场概况、今日高影响事件、Top 3策略各5行、风控官每次否决及原因、机器人状态与隔夜模拟交易、明确决定）。"
+    },
+    {
+      "time_cst": "每周日 20:00",
+      "cron": "0 20 * * 0",
+      "agent": "幕僚长 & 全员",
+      "task": "对比模拟盘周度净值与回测期望，评估晋级阶梯（模拟盘2周 → 与回测一致 → 经批准后10%仓位[2,000 RMB]实盘 → 完整规则）。"
+    }
+  ]
+}

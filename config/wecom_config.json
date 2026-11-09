@@ -1,0 +1,5 @@
+{
+  "enabled": true,
+  "webhook_url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d19d45ca-8e25-4928-b753-9f24c8369dcf",
+  "description": "一人对冲基金交易台企业微信群机器人 Webhook"
+}
